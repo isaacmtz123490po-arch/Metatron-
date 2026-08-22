@@ -1,0 +1,133 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Optimized Kick Player</title>
+    <link rel="icon" href="favicon.png" type="image/png" />
+    <link rel="stylesheet" href="style.css" />
+  </head>
+  <body>
+    <h1>Optimized Kick Player</h1>
+    <p class="subtitle">An optimized video player</p>
+
+    <div class="main-content">
+      <div class="player-section">
+        <div class="player-container" id="playerContainer">
+          <div class="placeholder" id="placeholder">
+            <span class="placeholder-icon">▶</span>
+            <span>Enter a channel or select one below to start watching</span>
+          </div>
+          <div class="player-overlay" id="playerOverlay">
+            <button class="overlay-btn" id="muteBtn" title="Mute (M)">
+              🔊
+            </button>
+            <button class="overlay-btn" id="pipBtn" title="PiP Mode (P)">
+              🖼️
+            </button>
+            <button
+              class="overlay-btn"
+              id="reloadOverlayBtn"
+              title="Reload (R)"
+            >
+              🔄
+            </button>
+            <button
+              class="overlay-btn"
+              id="fullscreenBtn"
+              title="Fullscreen (F)"
+            >
+              ⛶
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <div class="chat-section" id="chatSection">
+        <div class="chat-container">
+          <div class="chat-iframe-container" id="chatIframeContainer">
+            <div class="chat-placeholder" id="chatPlaceholder">
+              <span class="chat-placeholder-icon">💬</span>
+              <span>Load a channel to see chat</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="controls">
+      <button id="reloadBtn">Reload Player</button>
+      <button id="toggleChatBtn">Toggle Chat</button>
+    </div>
+
+    <div class="channels-section">
+      <h2>Channels and Videos</h2>
+
+      <div class="section-header">
+        <h3>Favorites</h3>
+      </div>
+      <div class="channel-list" id="favoritesList">
+        <p class="empty-state">
+          No favorites yet. Click the star on any channel to add it here.
+        </p>
+      </div>
+
+      <div class="section-header">
+        <h3>History</h3>
+        <button class="clear-btn" id="clearHistoryBtn">Clear History</button>
+      </div>
+      <div class="channel-list" id="historyList">
+        <p class="empty-state">Your watch history will appear here.</p>
+      </div>
+
+      <div class="section-header">
+        <h3>Search Channel</h3>
+      </div>
+      <div class="channel-input-group">
+        <input type="text" id="channelInput" placeholder="Enter channel name" />
+        <button id="goBtn">Go</button>
+      </div>
+
+      <div class="section-header">
+        <h3>Popular Channels</h3>
+      </div>
+      <div class="channel-list" id="channelList"></div>
+    </div>
+
+    <div class="shortcuts-help">
+      <h3>Keyboard Shortcuts</h3>
+      <div class="shortcuts-grid">
+        <div class="shortcut-item">
+          <span class="key">F</span> Toggle Fullscreen
+        </div>
+        <div class="shortcut-item">
+          <span class="key">M</span> Mute / Unmute
+        </div>
+        <div class="shortcut-item">
+          <span class="key">P</span> Picture-in-Picture
+        </div>
+        <div class="shortcut-item">
+          <span class="key">R</span> Reload Player
+        </div>
+        <div class="shortcut-item"><span class="key">C</span> Toggle Chat</div>
+        <div class="shortcut-item">
+          <span class="key">Esc</span> Exit Fullscreen
+        </div>
+      </div>
+    </div>
+
+    <p align="center" class="disclaimer">
+      No streams are hosted on our servers. Chat provided by <a
+        href="https://chat.kick.cx"
+        target="_blank"
+        rel="noopener noreferrer">chat.kick.cx</a>. This project is not affiliated with Kick. All rights belong to their respective owners.
+    </p>
+
+    <footer>
+      <small style="color: gray">Created by Onyx-i7 & Maintained by Byte9</small>
+    </footer>
+
+    <div class="toast" id="toast"></div>
+  </body>
+  <script src="script.js"></script>
+</html>
