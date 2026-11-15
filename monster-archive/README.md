@@ -12,6 +12,10 @@ Production endpoint: `https://metatronaip.vercel.app/api/chat`
 - CORS is enabled for connecting a separate app; provider credentials stay on Vercel, never in client HTML or the app.
 - The handler doesn't read/store visitor IP headers or store chats. The browser keeps chat history locally.
 
+## Knowledge retrieval
+
+Metatron keeps the full local monster bestiary and, for information questions, performs an on-demand search of Wikipedia's open knowledge base in Spanish or English. It sends only a short query to the encyclopedia, then provides up to four relevant summaries (about 7,200 characters total) to the selected AI model, with source links in the answer. This gives the assistant access to knowledge far beyond a fixed million-word prompt without loading an enormous corpus on every request. It is an internet lookup: encyclopedia availability/language coverage may vary; the AI keys described below are still required for generated answers. User chat/IP is not used to construct the encyclopedia query beyond the question text.
+
 ## Automatic provider failover
 
 The server tries configured providers in this order and automatically continues to the next when one errors, times out or rejects a request (including quota exhaustion): Gemini, OpenAI, Groq, OpenRouter, DeepSeek, Mistral, Cerebras. No user-facing model picker. Unconfigured providers are skipped. Each successful response identifies the provider used, not a required setting.
@@ -26,4 +30,4 @@ In Vercel Project → Settings → Environment Variables, add one or more provid
 - `MISTRAL_API_KEY` (`MISTRAL_MODEL`; default `mistral-small-latest`)
 - `CEREBRAS_API_KEY` (`CEREBRAS_MODEL`; default `llama-3.3-70b`)
 
-Never commit keys to GitHub. Each provider bills/limits its own API key; failover does not transfer or combine quotas. For initial test, configure two providers. A GIF will be placed in the thinking/loading animation when supplied by the user.
+Never commit keys to GitHub. Each provider bills/limits its own API key; failover does not transfer or combine quotas. For initial test, configure two providers. A GIF can be placed in the thinking/loading animation when supplied by the user.
