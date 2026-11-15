@@ -117,7 +117,7 @@ function addToHistory(channel) {
 }
 
 function clearHistory() {
-  if (!confirm("Are you sure you want to clear your watch history?")) return;
+  if (!confirm("¿Quieres borrar el historial de canales?")) return;
   saveToStorage(STORAGE_KEYS.HISTORY, []);
   renderHistory();
   showToast("Historial borrado");
@@ -173,10 +173,10 @@ function createChannelButton(channelName, showFavoriteBtn = true) {
     if (isFavorite(channelName)) {
       favBtn.classList.add("active");
       favBtn.textContent = "★";
-      favBtn.title = "Remove from favorites";
+      favBtn.title = "Quitar de favoritos";
     } else {
       favBtn.textContent = "☆";
-      favBtn.title = "Add to favorites";
+      favBtn.title = "Añadir a favoritos";
     }
     favBtn.addEventListener("click", (e) => {
       e.stopPropagation();
@@ -194,7 +194,7 @@ function renderFavorites() {
 
   if (favorites.length === 0) {
     favoritesList.innerHTML =
-      '<p class="empty-state">No favorites yet. Click the star on any channel to add it here.</p>';
+      '<p class="empty-state">Aún no hay favoritos. Toca ☆ en un canal para guardarlo.</p>';
     return;
   }
 
@@ -209,7 +209,7 @@ function renderHistory() {
 
   if (history.length === 0) {
     historyList.innerHTML =
-      '<p class="empty-state">Your watch history will appear here.</p>';
+      '<p class="empty-state">Aquí aparecerán los canales que visites.</p>';
     return;
   }
 
