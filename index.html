@@ -2,40 +2,51 @@
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Optimized Kick Player</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+    <meta name="theme-color" content="#080b0a" />
+    <meta name="description" content="Reproductor optimizado de Kick para móvil y escritorio." />
+    <title>Kick Player — Stream</title>
     <link rel="icon" href="favicon.png" type="image/png" />
     <link rel="stylesheet" href="style.css" />
   </head>
   <body>
-    <h1>Optimized Kick Player</h1>
-    <p class="subtitle">An optimized video player</p>
+    <div class="topbar">
+      <span class="brand-mark" aria-hidden="true">K</span>
+      <span class="brand-label">KICK <span>PLAYER</span></span>
+      <span class="official-embed"><span class="status-dot"></span> Reproductor integrado</span>
+    </div>
+    <h1>Tu stream, en pantalla grande.</h1>
+    <p class="subtitle">Busca un canal y disfruta la transmisión con el chat a un toque.</p>
 
     <div class="main-content">
       <div class="player-section">
-        <div class="player-container" id="playerContainer">
+        <div class="player-container" id="playerContainer" aria-label="Reproductor de Kick">
           <div class="placeholder" id="placeholder">
             <span class="placeholder-icon">▶</span>
-            <span>Enter a channel or select one below to start watching</span>
+            <span>Busca un canal o elige uno para empezar a ver</span>
+          </div>
+          <div class="stream-loading" id="streamLoading" role="status" aria-live="polite" hidden>
+            <span class="loading-orbit" aria-hidden="true"></span>
+            <span>Conectando con Kick…</span>
           </div>
           <div class="player-overlay" id="playerOverlay">
-            <button class="overlay-btn" id="muteBtn" title="Mute (M)">
+            <button class="overlay-btn" id="muteBtn" title="Silenciar (M)" aria-label="Silenciar o activar sonido">
               🔊
             </button>
-            <button class="overlay-btn" id="pipBtn" title="PiP Mode (P)">
+            <button class="overlay-btn" id="pipBtn" title="Ventana flotante (P)" aria-label="Abrir ventana flotante">
               🖼️
             </button>
             <button
               class="overlay-btn"
               id="reloadOverlayBtn"
-              title="Reload (R)"
+              title="Recargar (R)" aria-label="Recargar stream"
             >
               🔄
             </button>
             <button
               class="overlay-btn"
               id="fullscreenBtn"
-              title="Fullscreen (F)"
+              title="Pantalla completa (F)" aria-label="Pantalla completa"
             >
               ⛶
             </button>
@@ -56,78 +67,78 @@
     </div>
 
     <div class="controls">
-      <button id="reloadBtn">Reload Player</button>
-      <button id="toggleChatBtn">Toggle Chat</button>
+      <button id="reloadBtn">↻ <span>Recargar</span></button>
+      <button id="toggleChatBtn" aria-expanded="false" aria-controls="chatSection">▤ <span>Abrir chat</span></button>
     </div>
 
     <div class="channels-section">
-      <h2>Channels and Videos</h2>
+      <h2>Canales</h2>
 
       <div class="section-header">
-        <h3>Favorites</h3>
+        <h3>Favoritos</h3>
       </div>
       <div class="channel-list" id="favoritesList">
         <p class="empty-state">
-          No favorites yet. Click the star on any channel to add it here.
+          Aún no hay favoritos. Toca ☆ en un canal para guardarlo.
         </p>
       </div>
 
       <div class="section-header">
-        <h3>History</h3>
-        <button class="clear-btn" id="clearHistoryBtn">Clear History</button>
+        <h3>Vistos recientemente</h3>
+        <button class="clear-btn" id="clearHistoryBtn">Borrar historial</button>
       </div>
       <div class="channel-list" id="historyList">
-        <p class="empty-state">Your watch history will appear here.</p>
+        <p class="empty-state">Aquí aparecerán los canales que visites.</p>
       </div>
 
       <div class="section-header">
-        <h3>Search Channel</h3>
+        <h3>Buscar canal</h3>
       </div>
       <div class="channel-input-group">
-        <input type="text" id="channelInput" placeholder="Enter channel name" />
-        <button id="goBtn">Go</button>
+        <input type="text" id="channelInput" placeholder="Ej.: xqc" aria-label="Nombre del canal de Kick" inputmode="text" autocapitalize="none" autocomplete="off" autocorrect="off" spellcheck="false" maxlength="25" />
+        <button id="goBtn">Ver</button>
       </div>
 
       <div class="section-header">
-        <h3>Popular Channels</h3>
+        <h3>Canales populares</h3>
       </div>
       <div class="channel-list" id="channelList"></div>
     </div>
 
     <div class="shortcuts-help">
-      <h3>Keyboard Shortcuts</h3>
+      <h3>Atajos de teclado</h3>
       <div class="shortcuts-grid">
         <div class="shortcut-item">
-          <span class="key">F</span> Toggle Fullscreen
+          <span class="key">F</span> Pantalla completa
         </div>
         <div class="shortcut-item">
-          <span class="key">M</span> Mute / Unmute
+          <span class="key">M</span> Silenciar / activar sonido
         </div>
         <div class="shortcut-item">
-          <span class="key">P</span> Picture-in-Picture
+          <span class="key">P</span> Ventana flotante
         </div>
         <div class="shortcut-item">
-          <span class="key">R</span> Reload Player
+          <span class="key">R</span> Recargar reproductor
         </div>
-        <div class="shortcut-item"><span class="key">C</span> Toggle Chat</div>
+        <div class="shortcut-item"><span class="key">C</span> Mostrar / ocultar chat</div>
         <div class="shortcut-item">
-          <span class="key">Esc</span> Exit Fullscreen
+          <span class="key">Esc</span> Salir de pantalla completa
         </div>
       </div>
     </div>
 
     <p align="center" class="disclaimer">
-      No streams are hosted on our servers. Chat provided by <a
+      No alojamos transmisiones. Chat proporcionado por <a
         href="https://chat.kick.cx"
         target="_blank"
-        rel="noopener noreferrer">chat.kick.cx</a>. This project is not affiliated with Kick. All rights belong to their respective owners.
+        rel="noopener noreferrer">chat.kick.cx</a>. Este proyecto no está afiliado con Kick. Los derechos pertenecen a sus respectivos propietarios.
     </p>
 
     <footer>
       <small style="color: gray">Created by Onyx-i7 & Maintained by Byte9</small>
     </footer>
 
-    <div class="toast" id="toast"></div>
+    <div class="toast" id="toast" role="status" aria-live="polite"></div>
+    <script src="script.js"></script>
   </body>
-  <script src="script.js"></script>
 </html>

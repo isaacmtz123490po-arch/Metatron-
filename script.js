@@ -1,6 +1,7 @@
 // ==================== DOM Elements ====================
 const playerContainer = document.getElementById("playerContainer");
 const placeholder = document.getElementById("placeholder");
+const streamLoading = document.getElementById("streamLoading");
 const reloadBtn = document.getElementById("reloadBtn");
 const toggleChatBtn = document.getElementById("toggleChatBtn");
 const channelInput = document.getElementById("channelInput");
@@ -119,7 +120,7 @@ function clearHistory() {
   if (!confirm("Are you sure you want to clear your watch history?")) return;
   saveToStorage(STORAGE_KEYS.HISTORY, []);
   renderHistory();
-  showToast("🗑️ History cleared");
+  showToast("Historial borrado");
 }
 
 // ==================== Favorites Functions ====================
@@ -129,10 +130,10 @@ function toggleFavorite(channel) {
   let favorites = getFavorites();
   if (favorites.includes(channel)) {
     favorites = favorites.filter((f) => f !== channel);
-    showToast(`💔 Removed ${channel} from favorites`);
+    showToast(`Quitaste ${channel} de favoritos`);
   } else {
     favorites.push(channel);
-    showToast(`⭐ Added ${channel} to favorites`);
+    showToast(`Añadiste ${channel} a favoritos`);
   }
   saveToStorage(STORAGE_KEYS.FAVORITES, favorites);
   renderFavorites();
@@ -221,7 +222,7 @@ function renderChannelList(channels) {
   channelList.innerHTML = "";
 
   if (channels.length === 0) {
-    channelList.innerHTML = '<p class="empty-state">No channels available.</p>';
+    channelList.innerHTML = '<p class="empty-state">No hay canales para mostrar.</p>';
     return;
   }
 
@@ -241,9 +242,20 @@ function buildEmbedUrl(channel, muted = false) {
 }
 
 function loadChannel(channel) {
-  if (!channel || channel.trim() === "") return;
+  if (!channel || channel.trim() === "") {
+    showToast("Escribe el nombre de un canal de Kick");
+    channelInput.focus();
+    return;
+  }
 
-  currentChannel = channel.trim().toLowerCase();
+  const normalizedChannel = channel.trim().replace(/^@/, "").toLowerCase();
+  if (!/^[a-z0-9_]{1,25}$/.test(normalizedChannel)) {
+    showToast("Ese nombre no parece válido. Usa solo letras, números o _");
+    channelInput.focus();
+    return;
+  }
+
+  currentChannel = normalizedChannel;
   channelInput.value = currentChannel;
 
   addToHistory(currentChannel);
@@ -259,10 +271,16 @@ function loadChannel(channel) {
 
   const iframe = document.createElement("iframe");
   iframe.src = buildEmbedUrl(currentChannel, isMuted);
-  iframe.allow = "autoplay; fullscreen";
+  iframe.allow = "autoplay; fullscreen; picture-in-picture; encrypted-media; web-share";
   iframe.allowFullscreen = true;
-  iframe.title = `Kick Player - ${currentChannel}`;
+  iframe.loading = "eager";
+  iframe.referrerPolicy = "strict-origin-when-cross-origin";
+  iframe.title = `Reproductor Kick de ${currentChannel}`;
+  iframe.addEventListener("load", () => { if (streamLoading) streamLoading.hidden = true; });
   playerContainer.appendChild(iframe);
+  if (streamLoading) streamLoading.hidden = false;
+  playerContainer.dataset.channel = currentChannel;
+  playerContainer.classList.add("is-playing");
 
   // Update chat if visible
   if (isChatVisible) {
@@ -273,15 +291,15 @@ function loadChannel(channel) {
   renderHistory();
   renderChannelList(defaultChannels);
 
-  showToast(`▶Now playing: ${currentChannel}`);
+  showToast(`Reproduciendo: ${currentChannel}`);
 }
 
 function reloadPlayer() {
   if (currentChannel) {
     loadChannel(currentChannel);
-    showToast("Player reloaded");
+    showToast("Reproductor recargado");
   } else {
-    showToast("No channel loaded");
+    showToast("No hay ningún canal seleccionado");
   }
 }
 
@@ -293,12 +311,14 @@ function toggleChat() {
   chatIframeContainer.classList.toggle("active", isChatVisible);
   setChatEnabled(isChatVisible);
 
+  toggleChatBtn.querySelector("span").textContent = isChatVisible ? "Cerrar chat" : "Abrir chat";
+  toggleChatBtn.setAttribute("aria-expanded", String(isChatVisible));
   if (isChatVisible) {
     loadChat();
-    showToast("Chat enabled");
+    showToast("Chat de Kick abierto");
   } else {
     unloadChat();
-    showToast("Chat disabled");
+    showToast("Chat de Kick cerrado");
   }
 }
 
@@ -319,8 +339,10 @@ function loadChat() {
   // Create chat iframe
   const chatIframe = document.createElement("iframe");
   chatIframe.src = `https://chat.kick.cx/embed/${currentChannel}`;
-  chatIframe.allow = "autoplay";
-  chatIframe.title = `Kick Chat - ${currentChannel}`;
+  chatIframe.allow = "autoplay; clipboard-read; clipboard-write";
+  chatIframe.loading = "eager";
+  chatIframe.referrerPolicy = "strict-origin-when-cross-origin";
+  chatIframe.title = `Chat de Kick de ${currentChannel}`;
   chatIframeContainer.appendChild(chatIframe);
 }
 
@@ -336,7 +358,7 @@ function unloadChat() {
 
 function toggleMute() {
   if (!currentChannel) {
-    showToast("⚠️ No channel loaded");
+    showToast("Primero elige un canal");
     return;
   }
   isMuted = !isMuted;
@@ -347,20 +369,24 @@ function toggleMute() {
   if (iframe) {
     iframe.src = buildEmbedUrl(currentChannel, isMuted);
   }
-  showToast(isMuted ? "🔇 Muted" : "🔊 Unmuted");
+  showToast(isMuted ? "Silenciado" : "Sonido activado");
 }
 
 // ==================== Picture-in-Picture ====================
 
 function openPiP() {
   if (!currentChannel) {
-    showToast("⚠️ No channel loaded");
+    showToast("Primero elige un canal");
+    return;
+  }
+  if (window.matchMedia("(max-width: 700px)").matches) {
+    showToast("En Android usa pantalla completa desde el reproductor");
     return;
   }
 
   if (pipWindow && !pipWindow.closed) {
     pipWindow.focus();
-    showToast("🖼️ PiP window already open");
+    showToast("La ventana flotante ya está abierta");
     return;
   }
 
@@ -399,7 +425,7 @@ function openPiP() {
     pipWindow.document.write(pipHtml);
     pipWindow.document.close();
     pipBtn.classList.add("active");
-    showToast("🖼️ PiP mode opened");
+    showToast("Ventana flotante abierta");
 
     const checkClosed = setInterval(() => {
       if (pipWindow.closed) {
@@ -409,7 +435,7 @@ function openPiP() {
       }
     }, 1000);
   } else {
-    showToast("⚠️ Popup blocked. Please allow popups for this site.");
+    showToast("El navegador bloqueó la ventana emergente");
   }
 }
 
@@ -417,19 +443,28 @@ function openPiP() {
 
 function toggleFullscreen() {
   if (!document.fullscreenElement) {
-    playerContainer
-      .requestFullscreen()
+    const target = playerContainer.requestFullscreen ? playerContainer : playerContainer.querySelector("iframe");
+    if (!target) {
+      showToast("Elige un canal antes de abrir pantalla completa");
+      return;
+    }
+    const enterFullscreen = target.requestFullscreen || target.webkitRequestFullscreen;
+    if (!enterFullscreen) {
+      showToast("Usa el botón ⛶ del reproductor de Kick");
+      return;
+    }
+    Promise.resolve(enterFullscreen.call(target))
       .then(() => {
         fullscreenBtn.classList.add("active");
-        showToast("⛶ Fullscreen enabled");
+        showToast("Pantalla completa activada");
       })
       .catch((err) => {
-        showToast("⚠️ Fullscreen failed: " + err.message);
+        showToast("No se pudo abrir pantalla completa: " + err.message);
       });
   } else {
     document.exitFullscreen().then(() => {
       fullscreenBtn.classList.remove("active");
-      showToast("⛶ Fullscreen disabled");
+      showToast("Pantalla completa cerrada");
     });
   }
 }
@@ -509,11 +544,13 @@ document.addEventListener("DOMContentLoaded", () => {
   renderHistory();
   renderChannelList(defaultChannels);
 
-  // Restore chat state
+  // Restore chat visibility preference; do not load a chat iframe until a channel is chosen.
   if (isChatEnabled()) {
     isChatVisible = true;
     chatSection.classList.add("visible");
     chatIframeContainer.classList.add("active");
-    loadChat();
+    toggleChatBtn.querySelector("span").textContent = "Cerrar chat";
+    toggleChatBtn.setAttribute("aria-expanded", "true");
   }
+  channelInput.addEventListener("input", () => channelInput.classList.remove("invalid"));
 });
